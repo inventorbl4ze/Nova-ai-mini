@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b19">
+<title>NOVA AI MINI</title>
+<style>
+:root{
+ --bg:#080b19;--panel:#11172b;--panel2:#171f38;--text:#f4f6ff;
+ --muted:#9ca9c8;--line:#293451;--a:#7c5cff;--b:#00d9ff;
+ --good:#35d49a;--danger:#ff6484;--shadow:0 14px 40px #0005
+}
+body.light{
+ --bg:#f1f4ff;--panel:#fff;--panel2:#e9edff;--text:#151b35;
+ --muted:#64708e;--line:#d8def1;--shadow:0 12px 35px #34447718
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1250px;margin:auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;
+ gap:12px;padding:12px 0 20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+ font-size:25px;background:linear-gradient(135deg,var(--a),var(--b));
+ box-shadow:0 0 28px #715bff55}
+.brand h1{font-size:21px;margin:0;letter-spacing:1px}
+.brand small{color:var(--muted)}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);
+ border-radius:12px;padding:10px 13px}
+.btn.primary{background:linear-gradient(110deg,var(--a),#416bff);
+ border:0;color:white}
+.btn:hover,.nav button:hover{filter:brightness(1.15)}
+.layout{display:grid;grid-template-columns:225px minmax(0,1fr);gap:17px;margin-top:18px}
+aside,.main{background:var(--panel);border:1px solid var(--line);
+ border-radius:20px;box-shadow:var(--shadow)}
+aside{padding:14px;height:max-content;position:sticky;top:12px}
+.nav{display:grid;gap:7px}
+.nav button{border:0;text-align:left;padding:12px;border-radius:12px;
+ background:transparent;color:var(--muted)}
+.nav button.active{background:linear-gradient(100deg,#7657ff33,#00d9ff16);
+ color:var(--text);outline:1px solid #7864ff55}
+.side-note{margin-top:18px;padding:12px;background:var(--panel2);
+ border-radius:13px;color:var(--muted);font-size:12px;line-height:1.6}
+.main{padding:20px;min-height:650px}
+.view{display:none}.view.active{display:block}
+.hero{padding:22px;border-radius:18px;background:
+ radial-gradient(circle at 90% 10%,#00d9ff35,transparent 35%),
+ linear-gradient(120deg,#35216e,#14264a 70%,#102b3b);
+ margin-bottom:18px}
+.hero h2{font-size:clamp(25px,5vw,38px);margin:0 0 8px}
+.hero p{color:#d5dcff;max-width:650px;line-height:1.6}
+.orb{width:62px;height:62px;border-radius:50%;float:right;
+ background:radial-gradient(circle at 35% 30%,white,#00d9ff 20%,#7855ff 65%,#25134d);
+ box-shadow:0 0 35px #7c5cffaa}
+.section-title{display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin:20px 0 12px}
+.section-title h3{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:11px}
+.tile,.card{background:var(--panel2);border:1px solid var(--line);
+ border-radius:15px;padding:14px}
+.tile{cursor:pointer;min-height:100px}
+.tile strong{display:block;margin:8px 0 4px}
+.tile span{font-size:25px}
+.tile p,.card p{margin:4px 0;color:var(--muted);font-size:13px;line-height:1.55}
+.searchbar{display:flex;gap:8px;margin:12px 0}
+.searchbar input,.chat-input textarea,.field{
+ min-width:0;width:100%;padding:13px;border:1px solid var(--line);
+ background:var(--panel2);color:var(--text);border-radius:12px;outline:none
+}
+.searchbar input:focus,.field:focus,.chat-input textarea:focus{border-color:var(--a)}
+.chatbox{height:410px;overflow:auto;border:1px solid var(--line);
+ border-radius:15px;padding:14px;background:var(--bg)}
+.message{max-width:88%;padding:12px 14px;border-radius:15px;margin:10px 0;
+ white-space:pre-wrap;line-height:1.6;overflow-wrap:anywhere}
+.message.user{margin-left:auto;background:linear-gradient(120deg,#6245d8,#3656b9);color:white}
+.message.bot{background:var(--panel2);border:1px solid var(--line)}
+.message strong{color:var(--b)}
+.chat-input{display:flex;gap:8px;margin-top:10px;align-items:stretch}
+.chat-input textarea{resize:vertical;min-height:48px;max-height:120px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+ border-radius:30px;padding:8px 11px;font-size:12px}
+.result{border:1px solid var(--line);background:var(--panel2);
+ padding:14px;border-radius:14px;margin:10px 0}
+.result h4{margin:0 0 7px}
+.result a{display:inline-block;color:var(--b);margin:8px 12px 0 0;
+ text-decoration:none;font-size:13px}
+.result a:hover{text-decoration:underline}
+.answer{line-height:1.75;white-space:pre-wrap}
+.answer h4{margin-bottom:5px}
+.tag{font-size:11px;color:var(--b);text-transform:uppercase;letter-spacing:1px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.actions button{font-size:12px;padding:7px 10px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+@media(max-width:760px){
+ .layout{grid-template-columns:1fr}
+ aside{position:static;padding:9px}
+ .nav{display:flex;overflow:auto}
+ .nav button{white-space:nowrap;padding:10px}
+ .side-note{display:none}
+ .main{padding:13px;min-height:600px}
+ .chatbox{height:390px}
+ .message{max-width:96%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand">
+  <div class="logo">✦</div>
+  <div><h1>NOVA AI MINI</h1><small>Your offline knowledge universe</small></div>
+ </div>
+ <div class="top-actions">
+  <button class="btn" id="themeBtn">☀️ Theme</button>
+  <button class="btn" id="randomBtn">🎲 Surprise me</button>
+ </div>
+</header>
+
+<div class="layout">
+<aside>
+ <div class="nav" id="nav">
+  <button class="active" data-view="home">🏠 Home</button>
+  <button data-view="chat">✦ NOVA Chat</button>
+  <button data-view="knowledge">📚 Knowledge library</button>
+  <button data-view="apps">📲 App finder</button>
+  <button data-view="games">🎮 Gaming centre</button>
+  <button data-view="football">⚽ Football centre</button>
+  <button data-view="quiz">🧠 Quiz zone</button>
+  <button data-view="saved">⭐ Favourites</button>
+  <button data-view="history">🕘 Chat history</button>
+ </div>
+ <div class="side-note">
+  <strong>NOVA SYSTEM</strong><br>
+  Offline knowledge engine<br>
+  No API key required<br>
+  Your saved data stays in this browser.
+ </div>
+</aside>
+
+<main class="main">
+<section class="view active" id="home">
+ <div class="hero">
+  <div class="orb"></div>
+  <div class="tag">WELCOME TO YOUR KNOWLEDGE UNIVERSE</div>
+  <h2>Think bigger.<br>Discover more.</h2>
+  <p>Explore technology, science, gaming, football, education and thousands of questions you can investigate.</p>
+  <button class="btn primary" data-go="chat">Start chatting →</button>
+ </div>
+ <div class="section-title"><h3>Explore NOVA</h3><span class="muted small">Choose a universe</span></div>
+ <div class="grid" id="homeTiles"></div>
+ <div class="section-title"><h3>Try asking NOVA</h3></div>
+ <div class="chips" id="suggestions"></div>
+ <div class="card">
+  <strong>How NOVA works</strong>
+  <p>NOVA MINI searches its built-in knowledge and uses topic matching to produce answers. It is not a live internet-connected AI model. Its offline knowledge has limits, especially for breaking news and newly released apps or games.</p>
+ </div>
+</section>
+
+<section class="view" id="chat">
+ <div class="section-title"><h3>✦ NOVA Chat</h3><button class="btn" id="clearChat">Clear chat</button></div>
+ <p class="muted small">Ask a question. NOVA searches its local knowledge collection.</p>
+ <div class="chatbox" id="chatbox" aria-live="polite"></div>
+ <div class="chips" id="chatSuggestions"></div>
+ <div class="chat-input">
+  <textarea id="question" placeholder="Ask NOVA anything..." rows="2"></textarea>
+  <button class="btn primary" id="sendBtn">Send ➤</button>
+ </div>
+ <p class="muted small">Tip: Try “Explain artificial intelligence”, “How does football offside work?” or “Recommend coding apps”.</p>
+</section>
+
+<section class="view" id="knowledge">
+ <div class="section-title"><h3>📚 Knowledge library</h3><span class="muted small" id="countLabel"></span></div>
+ <input class="field" id="knowledgeSearch" placeholder="Search topics, questions or keywords...">
+ <div class="chips" id="categoryFilters"></div>
+ <div id="knowledgeResults"></div>
+</section>
+
+<section class="view" id="apps">
+ <div class="section-title"><h3>📲 NOVA App Finder</h3></div>
+ <p class="muted">Find apps by name or describe what you need. Links open the Play Store search or a web search.</p>
+ <div class="searchbar">
+  <input id="appSearch" placeholder="Example: offline coding app">
+  <button class="btn primary" id="appSearchBtn">Find</button>
+ </div>
+ <div class="chips" id="appQuick"></div>
+ <div id="appResults"></div>
+ <hr>
+ <p class="small muted">Availability, prices, ads, permissions and compatibility can change. Check the app listing before installing.</p>
+</section>
+
+<section class="view" id="games">
+ <div class="section-title"><h3>🎮 NOVA Gaming Centre</h3></div>
+ <p class="muted">Explore game genres, gaming concepts and useful Play Store searches.</p>
+ <div class="searchbar"><input id="gameSearch" placeholder="Find a game or genre"><button class="btn primary" id="gameSearchBtn">Search</button></div>
+ <div class="grid" id="gameTiles"></div>
+ <div id="gameResults"></div>
+</section>
+
+<section class="view" id="football">
+ <div class="section-title"><h3>⚽ NOVA Football Centre</h3></div>
+ <div class="grid" id="footballTiles"></div>
+ <div class="card" style="margin-top:14px">
+  <strong>Ask NOVA about football</strong>
+  <p>Try: formations, offside, pressing, passing, positions, tournaments or football history.</p>
+  <button class="btn primary" data-ask="Explain the 4-3-3 football formation">Explain 4-3-3</button>
+ </div>
+</section>
+
+<section class="view" id="quiz">
+ <div class="section-title"><h3>🧠 NOVA Quiz Zone</h3><span class="muted small" id="quizScore">Score: 0</span></div>
+ <div class="card" id="quizCard">
+  <p class="muted">Test your knowledge across science, technology, football and general knowledge.</p>
+  <button class="btn primary" id="startQuiz">Start quiz</button>
+ </div>
+</section>
+
+<section class="view" id="saved">
+ <div class="section-title"><h3>⭐ Your favourites</h3></div>
+ <div id="savedResults"></div>
+</section>
+
+<section class="view" id="history">
+ <div class="section-title"><h3>🕘 Chat history</h3><button class="btn" id="clearHistory">Delete history</button></div>
+ <div id="historyResults"></div>
+</section>
+</main>
+</div>
+<footer>NOVA AI MINI • Built for curiosity • Offline-first knowledge</footer>
+</div>
+
+<script>
+"use strict";
+
+/* NOVA KNOWLEDGE DATABASE
+   Add more entries to this array to expand NOVA's knowledge.
+*/
+const knowledge = [
+{cat:"Artificial Intelligence",title:"What is artificial intelligence?",keys:"AI artificial intelligence machine learning computer intelligence",
+body:`Artificial intelligence (AI) is a field of computing that builds systems able to perform tasks that normally require human-like abilities, such as recognising patterns, understanding language, making predictions and solving problems.
+
+AI is not one single invention. It includes many techniques. Some systems follow carefully written rules. Others learn statistical patterns from examples.
+
+MACHINE LEARNING: A branch of AI in which a system learns patterns from data rather than relying only on hand-written rules.
+
+DEEP LEARNING: A type of machine learning that uses neural networks with many layers. It is useful for images, speech and language.
+
+GENERATIVE AI: Systems that create new content, such as text, images, audio or code, based on patterns learned during training.
+
+EXAMPLE: An email filter can learn to recognise likely spam. A map app can estimate traffic. A chatbot can generate a response to a question.
+
+IMPORTANT LIMIT: AI can make mistakes, invent details or reflect biases in its training data. Important claims should be checked.`},
+{cat:"Artificial Intelligence",title:"How does an AI chatbot work?",keys:"chatbot language model LLM prompt tokens neural network",
+body:`An AI chatbot receives a message, processes the text and generates a response. Modern language models use neural networks trained on large collections of text and other information.
+
+A simplified process:
+1. The message is broken into small units called tokens.
+2. The model processes relationships between those tokens.
+3. It estimates which next token is likely to fit.
+4. It repeats this process to create a response.
+
+The model does not think exactly like a person. It identifies patterns and generates likely continuations. It can explain, summarise, brainstorm and help with code, but it can also be wrong.
+
+A chatbot may use additional tools, such as web search or calculators. Without those tools, it cannot automatically know current events or inspect the live internet.`},
+{cat:"Artificial Intelligence",title:"AI vs machine learning vs deep learning",keys:"difference AI ML machine learning deep learning",
+body:`Artificial intelligence is the broad field of making computers perform tasks associated with intelligent behaviour.
+
+Machine learning is a subset of AI. It allows systems to learn patterns from examples or data.
+
+Deep learning is a subset of machine learning. It uses neural networks with multiple processing layers.
+
+Think of three nested circles: deep learning sits inside machine learning, which sits inside artificial intelligence.
+
+Example: A system that follows fixed rules to sort files may be AI without machine learning. A model trained on thousands of labelled pictures to identify cats uses machine learning. A large neural network that learns visual patterns is using deep learning.`},
+{cat:"Technology",title:"How does a computer work?",keys:"computer CPU RAM storage hardware software",
+body:`A computer is an electronic machine that accepts input, processes information, stores data and produces output.
+
+CPU: The central processing unit executes instructions and coordinates operations. It is often described as the computer's processor.
+
+RAM: Random access memory holds information that active programs need quickly. It is temporary working memory and is cleared when power is removed.
+
+STORAGE: SSDs, hard drives and flash memory keep files even when the device is switched off.
+
+INPUT: A keyboard, touchscreen, mouse or microphone sends information into a computer.
+
+OUTPUT: A display, speaker or printer presents results.
+
+SOFTWARE: Programs and operating systems tell hardware what tasks to perform.
+
+These parts work together. A powerful processor cannot compensate for every limitation in memory, storage, cooling or software.`},
+{cat:"Technology",title:"What is an operating system?",keys:"OS Android Windows Linux iOS operating system",
+body:`An operating system (OS) is the main software that manages a computer or phone. It connects applications to the hardware and coordinates tasks.
+
+Examples include Android, iOS, Windows, macOS and Linux.
+
+An operating system manages:
+• Processes and multitasking.
+• Memory and storage access.
+• Files and folders.
+• Screen, sound, camera and network hardware.
+• User accounts and security permissions.
+
+Apps normally rely on the OS instead of controlling hardware directly. Updates can add features, fix bugs and patch security problems. A device's available updates depend on its manufacturer and model.`},
+{cat:"Technology",title:"What is the internet?",keys:"internet web website browser wifi network",
+body:`The internet is a worldwide network of connected computer networks. Devices use agreed communication rules called protocols to exchange information.
+
+The World Wide Web is one service that uses the internet. Websites are accessed through browsers using addresses called URLs.
+
+Wi-Fi is a wireless technology that connects a device to a nearby network. Wi-Fi itself is not the internet: a Wi-Fi network can exist without an internet connection.
+
+When you open a website, your device sends network requests to servers. Those servers send data back, and your browser displays the result.`},
+{cat:"Technology",title:"How do smartphones work?",keys:"phone smartphone touchscreen processor modem camera battery",
+body:`A smartphone is a small computer with communication hardware, sensors, a screen, battery and operating system.
+
+The processor runs apps. RAM holds active app data. Flash storage keeps photos and files. The modem communicates with mobile networks. Wi-Fi and Bluetooth provide other wireless connections.
+
+Sensors may include accelerometers, gyroscopes, proximity sensors and light sensors. Cameras use image sensors and software processing to create photos.
+
+Battery life depends on screen brightness, signal strength, apps, processor activity, battery condition and temperature. Closing every app constantly is not always necessary; the operating system manages background activity.`},
+{cat:"Technology",title:"What is programming?",keys:"coding programming software language algorithm",
+body:`Programming is the process of writing instructions that a computer can execute.
+
+A programming language gives people a structured way to express those instructions. Examples include Python, JavaScript, Java, C, C++ and Kotlin.
+
+An algorithm is a sequence of steps for solving a problem. A program implements an algorithm using code.
+
+Common building blocks:
+• Variables store values.
+• Conditions choose between paths.
+• Loops repeat instructions.
+• Functions organise reusable tasks.
+• Data structures organise information.
+
+Beginners can start with small projects: a calculator, quiz, to-do list or simple game. Reading errors and testing small changes are important parts of learning.`},
+{cat:"Technology",title:"What is HTML, CSS and JavaScript?",keys:"HTML CSS JavaScript website frontend",
+body:`HTML, CSS and JavaScript are three core technologies used to build websites.
+
+HTML describes the structure and meaning of page content, such as headings, paragraphs, images and buttons.
+
+CSS controls presentation: colours, spacing, layout, typography and responsive design.
+
+JavaScript adds behaviour, such as responding to button clicks, checking forms, updating content and saving settings.
+
+A simple website can use all three in one HTML file. Larger projects often separate them into different files and may use frameworks or build tools.`},
+{cat:"Technology",title:"What is cybersecurity?",keys:"cybersecurity online safety password phishing malware",
+body:`Cybersecurity is the practice of protecting devices, accounts, networks and information from unauthorised access, damage or misuse.
+
+Common risks include phishing messages, weak or reused passwords, malicious downloads, fake websites and outdated software.
+
+Safer habits:
+• Use unique passwords and a password manager where appropriate.
+• Turn on multi-factor authentication when available.
+• Install updates from trusted sources.
+• Check website addresses before entering information.
+• Avoid unknown files and suspicious links.
+• Keep backups of important work.
+
+No security measure is perfect. The goal is to reduce risk and recover safely if something goes wrong.`},
+{cat:"Science",title:"What is physics?",keys:"physics matter energy motion forces",
+body:`Physics is the science of matter, energy, motion and the interactions that shape the natural world.
+
+Major areas include mechanics, thermodynamics, electromagnetism, waves, optics, relativity and quantum physics.
+
+Mechanics studies motion and forces. Thermodynamics studies heat and energy transfer. Electromagnetism describes electric and magnetic effects. Optics studies light.
+
+Physics helps explain everyday events, from a ball moving through the air to electricity powering a phone. It also supports engineering, medical imaging, communications and space exploration.`},
+{cat:"Science",title:"What is chemistry?",keys:"chemistry atoms molecules elements reactions",
+body:`Chemistry studies matter: what substances are made of, how they are structured and how they change.
+
+An atom is a basic unit of a chemical element. Atoms contain protons and neutrons in a nucleus, with electrons around it.
+
+An element contains one type of atom. A compound contains atoms of different elements chemically combined in fixed proportions.
+
+A chemical reaction rearranges atoms to form new substances. Atoms are conserved in ordinary chemical reactions, even though their bonds and arrangements change.
+
+Chemistry is important in medicines, materials, food, energy, agriculture and environmental science.`},
+{cat:"Science",title:"What is biology?",keys:"biology living organisms cells DNA ecosystems",
+body:`Biology is the scientific study of living organisms and life processes.
+
+Cell biology studies cells, the basic structural and functional units of life. Genetics studies inheritance and DNA. Ecology studies relationships between organisms and their environments. Evolution explains how populations change over generations.
+
+Living things show features such as organisation, metabolism, growth, response to their environment and reproduction, although the definition of life has complex edge cases.
+
+Biology connects to medicine, farming, conservation, biotechnology and public health.`},
+{cat:"Science",title:"What is DNA?",keys:"DNA genes genetics chromosomes heredity",
+body:`DNA stands for deoxyribonucleic acid. It is a molecule that stores hereditary information in almost all living organisms.
+
+DNA is built from smaller units called nucleotides. The order of four chemical bases carries information. Sections of DNA can function as genes, which contribute to the production of functional molecules and influence traits.
+
+In many organisms, DNA is organised into chromosomes inside cells. People inherit DNA from biological parents, but traits are also affected by environment and many interacting genes.
+
+DNA testing can provide useful information, but results need careful interpretation and privacy protection.`},
+{cat:"Science",title:"How does electricity work?",keys:"electricity current voltage resistance circuit",
+body:`Electricity involves electric charges and their behaviour.
+
+Voltage is the difference in electric potential between two points. Current is the rate at which electric charge flows. Resistance describes how strongly a component opposes current.
+
+Ohm's law relates voltage, current and resistance:
+V = I × R
+
+A simple circuit needs a source of electrical energy and a conducting path. A switch can open or close that path. Components such as resistors, lamps and motors use electrical energy in different ways.
+
+Electrical systems can be dangerous. Practical electrical work should be done with appropriate training and supervision.`},
+{cat:"Space",title:"What is the solar system?",keys:"solar system sun planets earth mars jupiter",
+body:`The solar system consists of the Sun and the objects gravitationally bound to it, including eight recognised planets, dwarf planets, moons, asteroids and comets.
+
+The planets in order from the Sun are Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus and Neptune.
+
+The four inner planets are rocky. Jupiter and Saturn are gas giants. Uranus and Neptune are ice giants.
+
+Earth is the only world currently known to support life. Space missions use telescopes, orbiters, landers and rovers to study other worlds.`},
+{cat:"Space",title:"What is a black hole?",keys:"black hole gravity event horizon space",
+body:`A black hole is a region of spacetime where gravity is so strong that, inside a boundary called the event horizon, nothing can escape to the outside—not even light.
+
+Black holes can form when massive stars collapse. Some are millions or billions of times more massive than the Sun and are found in the centres of galaxies.
+
+Scientists study black holes through their effects on nearby matter, gravitational waves and radiation from hot material outside the event horizon.
+
+A black hole is not a cosmic vacuum cleaner that automatically pulls in everything around it. At a sufficient distance, its gravity behaves like that of any other object with the same mass.`},
+{cat:"Mathematics",title:"What is algebra?",keys:"maths mathematics algebra variables equations",
+body:`Algebra uses symbols, often letters, to represent numbers and relationships.
+
+A variable is a symbol whose value may be unknown or may change. An equation states that two expressions are equal.
+
+Example:
+3x + 2 = 14
+Subtract 2 from both sides: 3x = 12.
+Divide both sides by 3: x = 4.
+
+The key idea is to keep both sides of an equation balanced by performing the same valid operation on each side.
+
+Algebra is used in science, engineering, finance, computing and everyday problem-solving.`},
+{cat:"Mathematics",title:"What is probability?",keys:"probability chance likely events",
+body:`Probability measures how likely an event is to happen. It ranges from 0 to 1, or from 0% to 100%.
+
+A probability of 0 means impossible under the model. A probability of 1 means certain under the model.
+
+For equally likely outcomes:
+Probability = number of favourable outcomes ÷ total number of possible outcomes.
+
+For a fair six-sided die, the probability of rolling a 4 is 1/6.
+
+Real-world probabilities may depend on data, assumptions and changing conditions. A probability is not a guarantee about one particular outcome.`},
+{cat:"Education",title:"How to study effectively",keys:"study learning revision memory exam",
+body:`Effective studying is active. Instead of only rereading notes, try to retrieve information from memory and practise applying it.
+
+Useful techniques:
+• Active recall: close your notes and explain what you remember.
+• Spaced practice: revisit material over several sessions.
+• Practice questions: apply ideas and identify gaps.
+• Interleaving: mix related problem types after learning the basics.
+• Teach-back: explain a topic in your own words.
+
+Break large topics into smaller goals. Sleep, breaks and a realistic schedule support learning. If a method is not helping, adjust it rather than assuming you are incapable.`},
+{cat:"Football",title:"What is the offside rule?",keys:"football soccer offside rule attacker defender",
+body:`In association football, a player is in an offside position if, when a teammate plays or touches the ball, the player's head, body or feet are in the opponents' half and nearer to the opponents' goal line than both the ball and the second-last opponent.
+
+Being in an offside position is not itself an offence. The player must become involved in active play, such as interfering with play, interfering with an opponent or gaining an advantage.
+
+There is no offside offence directly from a goal kick, throw-in or corner kick.
+
+The rule is designed to prevent attackers from simply waiting beside the opponent's goal.`},
+{cat:"Football",title:"Explain the 4-3-3 formation",keys:"football formation 433 midfield wingers striker",
+body:`The 4-3-3 formation usually has four defenders, three midfielders and three forwards.
+
+DEFENCE: Two centre-backs and two full-backs provide the defensive line.
+
+MIDFIELD: Three midfielders can include a holding midfielder and two more advanced players. Their roles may involve protecting the defence, progressing the ball and creating chances.
+
+ATTACK: A central striker is supported by two wide forwards or wingers.
+
+Strengths can include width, pressing options and midfield combinations. Weaknesses can appear if the midfield becomes stretched or full-backs advance without cover.
+
+The numbers describe a starting shape, not a fixed arrangement. Teams change shape during matches.`},
+{cat:"Football",title:"What is pressing in football?",keys:"pressing high press counterpress football tactics",
+body:`Pressing is a team strategy for putting pressure on opponents when they have possession.
+
+A high press tries to challenge the opponent near their own defensive area. A mid-block applies pressure around the middle of the pitch. A low block defends deeper and protects space near the team's goal.
+
+Good pressing is coordinated. Players close passing lanes, support teammates and move together. If one player presses alone, opponents may pass around them.
+
+Pressing can win the ball higher up the pitch, but it can also use energy and leave space behind the defensive line.`},
+{cat:"Football",title:"What are the main football positions?",keys:"football positions goalkeeper defender midfielder forward",
+body:`Goalkeeper: Protects the goal and organises the defence.
+
+Centre-back: Defends central areas, challenges attackers and helps build play.
+
+Full-back or wing-back: Defends wide areas and may support attacks.
+
+Defensive midfielder: Protects the defence and helps move possession.
+
+Central midfielder: Connects defence and attack through passing, movement and support.
+
+Attacking midfielder: Creates chances in advanced central areas.
+
+Winger: Attacks from wide positions, often using speed, crossing or dribbling.
+
+Striker: Leads the attack and aims to create or score goals.
+
+Modern players often perform several roles depending on the team's tactics.`},
+{cat:"Gaming",title:"What is an offline game?",keys:"offline gaming no internet single player",
+body:`An offline game can be played without an active internet connection, usually after it has been installed and any required initial setup is complete.
+
+Some games are fully offline. Others require internet for login, updates, cloud saves, advertisements or certain modes.
+
+Before travelling or relying on offline play, test the game with mobile data and Wi-Fi switched off. Also check whether extra game files must be downloaded first.
+
+Offline multiplayer may mean two players sharing one device or devices connecting over a local network. It does not automatically mean every game supports it.`},
+{cat:"Gaming",title:"What is local multiplayer?",keys:"local multiplayer wifi bluetooth LAN same device",
+body:`Local multiplayer lets players share a game session while physically nearby.
+
+Common types include:
+• Same-device multiplayer: players share one screen or device.
+• Split-screen: each player gets a section of the display.
+• Local Wi-Fi or LAN: devices connect through the same local network.
+• Bluetooth: nearby devices communicate over Bluetooth when the game supports it.
+
+Local multiplayer does not always require mobile data, but setup differs between games. Check the game's supported modes and device requirements.`},
+{cat:"Gaming",title:"What makes a game 3D?",keys:"3D game graphics models camera rendering",
+body:`A 3D game represents objects and environments using three-dimensional coordinates: width, height and depth.
+
+A game engine or rendering system turns 3D models, materials, lights and camera information into images on the screen.
+
+Important elements include geometry, textures, animation, lighting, physics and camera movement.
+
+A game can look 3D without being a huge open world. Performance depends on the complexity of the scene, graphics settings, processor, graphics hardware and optimisation.`},
+{cat:"Gaming",title:"What is an RPG?",keys:"RPG role playing game levels quests characters",
+body:`RPG means role-playing game. Players usually control a character or party, develop abilities and take part in a story or world.
+
+Common features include experience points, levels, equipment, quests, dialogue and character customisation.
+
+Action RPGs combine character progression with real-time combat. Turn-based RPGs use structured turns. MMORPGs bring many players into a shared online world.
+
+Not every RPG includes every feature. The genre is broad and mixes with adventure, strategy and simulation games.`},
+{cat:"Gaming",title:"What is game optimisation?",keys:"game lag FPS performance graphics settings",
+body:`Game optimisation means improving a game's performance while preserving as much visual quality as possible.
+
+Frame rate, measured in frames per second (FPS), describes how often a new image is displayed. Stable frame pacing often feels smoother than a higher but inconsistent frame rate.
+
+Developers optimise models, textures, lighting, physics and memory use. Players can sometimes improve performance by choosing suitable graphics settings, closing unnecessary background tasks and keeping the device cool.
+
+Performance varies by device, game version and operating system.`},
+{cat:"Everyday Life",title:"How does money work?",keys:"money currency saving budgeting economy",
+body:`Money is a widely accepted way to exchange goods and services, measure prices and store value.
+
+Modern money may exist as physical cash or digital balances. A bank balance is an account record, not a pile of notes reserved in a drawer.
+
+A budget is a plan for income and spending. Saving means setting aside resources for future needs. Comparing prices and understanding fees can help people make informed decisions.
+
+Money systems vary by country. Financial products carry different risks, terms and costs, so important decisions should be discussed with a trusted adult or qualified professional when appropriate.`},
+{cat:"Geography",title:"What is geography?",keys:"geography continents countries maps climate",
+body:`Geography studies places, environments and the relationships between people and the world around them.
+
+Physical geography examines landforms, rivers, weather, climate, soils and ecosystems.
+
+Human geography studies population, cities, culture, migration, economies and how people use space.
+
+Maps represent locations and spatial information. Scale, direction, symbols and projections help readers interpret them.
+
+Geography connects natural processes with human decisions, including transport, farming, urban planning and conservation.`},
+{cat:"History",title:"Why is history important?",keys:"history past civilisation evidence sources",
+body:`History is the study of the past using evidence such as documents, objects, buildings, photographs, oral accounts and scientific analysis.
+
+Historians compare sources, consider who created them and ask what information may be missing or biased.
+
+History helps people understand how societies, technology, ideas, conflicts and institutions changed over time. It can reveal patterns, but the past does not repeat in exactly the same way.
+
+Good historical explanations distinguish evidence from speculation.`},
+{cat:"Curious Questions",title:"Why is the sky blue?",keys:"sky blue sunlight scattering atmosphere",
+body:`Sunlight contains many colours. When it enters Earth's atmosphere, tiny gas molecules scatter shorter wavelengths of visible light more strongly than longer wavelengths.
+
+Blue light is scattered in many directions, so when we look away from the Sun, the sky appears blue.
+
+At sunrise and sunset, sunlight travels through more atmosphere before reaching our eyes. Much of the blue light is scattered out of the direct path, leaving warmer colours such as orange and red more noticeable.`},
+{cat:"Curious Questions",title:"Can time travel happen?",keys:"time travel relativity future past science",
+body:`Time travel is a topic in physics and science fiction. In a limited scientific sense, travelling into the future at a different rate from other people is possible.
+
+Einstein's relativity predicts time dilation: clocks can tick at different rates depending on relative speed and gravitational conditions. This effect has been measured with precise clocks and must be considered in satellite navigation.
+
+Travelling into the past is much more speculative. Some mathematical solutions discuss unusual spacetime geometries, but there is no known practical method for travelling to the past.`},
+{cat:"Curious Questions",title:"What is a paradox?",keys:"paradox logic puzzle contradiction",
+body:`A paradox is a statement, situation or argument that appears contradictory or challenges ordinary expectations.
+
+Some paradoxes reveal hidden assumptions. Others are puzzles about language, mathematics, probability or logic.
+
+Example: The liar paradox is often expressed as “This statement is false.” If it is true, it seems false; if it is false, it seems true.
+
+Paradoxes are useful because they encourage careful definitions and reasoning. Not every surprising statement is a genuine logical contradiction.`},
+{cat:"Inventions",title:"How do inventions happen?",keys:"invention innovation engineering design",
+body:`An invention is a new device, method or process. Innovation is the process of turning ideas into useful improvements or applications.
+
+A common design process is:
+1. Identify a problem.
+2. Research existing solutions.
+3. Sketch possible ideas.
+4. Build a prototype.
+5. Test it and collect feedback.
+6. Improve the design.
+7. Consider safety, cost, materials and usability.
+
+Many inventions build on earlier discoveries. Collaboration between scientists, engineers, designers and users is often important.`}
+];
+
+const apps = [
+{name:"Acode",desc:"Code editor for writing and editing web projects on Android.",tags:"coding programming html editor",site:"https://acode.foxdebug.com"},
+{name:"AnkiDroid",desc:"Flashcards and spaced repetition for learning and revision.",tags:"study flashcards memory education",site:"https://ankidroid.org"},
+{name:"Canva",desc:"Graphic design, posters, presentations and social media designs.",tags:"design graphics posters editing",site:"https://www.canva.com"},
+{name:"GeoGebra",desc:"Interactive mathematics tools for algebra, geometry and graphs.",tags:"math maths geometry graph",site:"https://www.geogebra.org"},
+{name:"Photomath",desc:"Math learning support with worked explanations.",tags:"math maths calculator",site:"https://photomath.com"},
+{name:"PhET Simulations",desc:"Interactive science and mathematics simulations.",tags:"science physics chemistry simulation",site:"https://phet.colorado.edu"},
+{name:"Scratch",desc:"Beginner-friendly visual programming and creative projects.",tags:"coding programming games beginner",site:"https://scratch.mit.edu"},
+{name:"Wikipedia",desc:"A large encyclopaedia covering many subjects.",tags:"knowledge facts research encyclopedia",site:"https://www.wikipedia.org"},
+{name:"Google Earth",desc:"Explore satellite imagery, maps and places around Earth.",tags:"maps geography earth places",site:"https://earth.google.com"},
+{name:"Duolingo",desc:"Language-learning lessons and practice.",tags:"language learning words",site:"https://www.duolingo.com"},
+{name:"Khan Academy",desc:"Lessons and practice across school subjects.",tags:"education school maths science",site:"https://www.khanacademy.org"},
+{name:"VLC",desc:"Media player for many audio and video formats.",tags:"video music player media",site:"https://www.videolan.org/vlc"},
+{name:"Firefox",desc:"Web browser with privacy and customisation features.",tags:"browser internet web",site:"https://www.mozilla.org/firefox"},
+{name:"Google Keep",desc:"Notes, lists and reminders.",tags:"notes writing reminder",site:"https://keep.google.com"},
+{name:"Google Translate",desc:"Translate text and explore languages.",tags:"translation language",site:"https://translate.google.com"}
+];
+
+const gameGenres=[
+ ["⚽","Football games","football soccer fifa efootball dls dream league"],
+ ["🏎️","Racing games","racing cars driving drift simulator"],
+ ["🌍","Open-world games","open world adventure exploration life simulator"],
+ ["🧱","Building games","building crafting sandbox construction"],
+ ["🎯","Action games","action shooter adventure combat"],
+ ["🧠","Strategy games","strategy tactics tower defense"],
+ ["🧟","Survival games","survival crafting zombies"],
+ ["🤖","Simulation games","simulation business farming city"]
+];
+
+const footballTopics=[
+ ["📐","Formations","formation 4-3-3 4-2-3-1 3-5-2"],
+ ["🧠","Tactics","pressing tactics counterattack possession"],
+ ["📜","Rules","offside football rules fouls penalty"],
+ ["🥅","Positions","goalkeeper defender midfielder striker"],
+ ["🏆","Competitions","football tournament league cup"],
+ ["📚","History","football history origins world cup"]
+];
+
+const quizQuestions=[
+ {q:"Which part of a computer executes instructions?",a:["CPU","Speaker","Monitor","Mouse"],c:0,why:"The CPU processes instructions and coordinates computer operations."},
+ {q:"Which planet is known as the Red Planet?",a:["Venus","Mars","Neptune","Mercury"],c:1,why:"Mars looks reddish because of iron-rich dust on its surface."},
+ {q:"How many players does one football team normally have on the pitch?",a:["9","10","11","12"],c:2,why:"A standard team has eleven players, including the goalkeeper."},
+ {q:"What does HTML mainly describe?",a:["Website structure","Battery power","Wi-Fi speed","Computer temperature"],c:0,why:"HTML structures the content of web pages."},
+ {q:"What is the basic unit of life?",a:["Atom","Cell","Planet","Tissue"],c:1,why:"The cell is the basic structural and functional unit of life."},
+ {q:"Which gas do plants use in photosynthesis?",a:["Oxygen","Carbon dioxide","Helium","Hydrogen"],c:1,why:"Plants use carbon dioxide, water and light energy to make sugars."},
+ {q:"What does RAM provide?",a:["Temporary working memory","Permanent paper storage","Internet service","Sound output"],c:0,why:"RAM stores data that active programs need quickly."},
+ {q:"What is the capital of Nigeria?",a:["Lagos","Kano","Abuja","Ibadan"],c:2,why:"Abuja is the capital city of Nigeria."}
+];
+
+const $=id=>document.getElementById(id);
+const safeGet=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const safeSet=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch{}};
+let favorites=safeGet("nova_favs",[]);
+let history=safeGet("nova_history",[]);
+let activeCategory="All";
+let quizIndex=0,quizScore=0,quizOrder=[];
+
+function showView(name){
+ document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===name));
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
+ if(name==="saved")renderSaved();
+ if(name==="history")renderHistory();
+ if(name==="knowledge")renderKnowledge();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+$("nav").addEventListener("click",e=>{
+ const b=e.target.closest("[data-view]");
+ if(b)showView(b.dataset.view);
+});
+document.addEventListener("click",e=>{
+ const go=e.target.closest("[data-go]");
+ if(go)showView(go.dataset.go);
+ const ask=e.target.closest("[data-ask]");
+ if(ask){showView("chat");$("question").value=ask.dataset.ask;sendQuestion();}
+});
+function addMessage(text,type="bot",save=true){
+ const box=$("chatbox"),el=document.createElement("div");
+ el.className="message "+type;el.textContent=text;
+ box.appendChild(el);box.scrollTop=box.scrollHeight;
+ if(save){history.push({type,text,time:new Date().toLocaleString()});history=history.slice(-100);safeSet("nova_history",history)}
+}
+function scoreEntry(q,item){
+ const words=(q.toLowerCase().match(/[a-z0-9]+/g)||[]).filter(w=>w.length>2);
+ const hay=(item.title+" "+item.cat+" "+item.keys+" "+item.body).toLowerCase();
+ let score=0;
+ words.forEach(w=>{if(item.title.toLowerCase().includes(w))score+=5;if(item.keys.toLowerCase().includes(w))score+=3;if(item.cat.toLowerCase().includes(w))score+=2;if(hay.includes(w))score+=1});
+ if(item.title.toLowerCase()===q.toLowerCase())score+=20;
+ return score;
+}
+function findKnowledge(q){
+ return knowledge.map(item=>({item,score:scoreEntry(q,item)}))
+ .filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,5);
+}
+function answerQuestion(q){
+ const results=findKnowledge(q);
+ if(!results.length){
+  if(/app|application|download|play store|recommend.*game|game.*recommend/i.test(q)){
+   return "I couldn't find a detailed built-in answer for that exact request. Try the NOVA App Finder or Gaming Centre to create useful store search links. I work offline, so I cannot verify live availability or today's newest releases.";
+  }
+  return "I don't have a reliable built-in answer for that exact question yet. Try using different keywords, opening the Knowledge Library, or asking about a related topic. NOVA MINI works offline and does not automatically search the live internet, so I won't invent an answer.";
+ }
+ const best=results[0].item;
+ let response=best.title+"\n\n"+best.body;
+ if(results.length>1)response+="\n\nRELATED TOPICS\n"+results.slice(1,4).map(x=>"• "+x.item.title).join("\n");
+ return response;
+}
+function sendQuestion(){
+ const q=$("question").value.trim();if(!q)return;
+ addMessage(q,"user");$("question").value="";
+ const response=answerQuestion(q);
+ setTimeout(()=>addMessage(response,"bot"),120);
+}
+$("sendBtn").addEventListener("click",sendQuestion);
+$("question").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendQuestion()}});
+$("clearChat").addEventListener("click",()=>{$("chatbox").innerHTML="";history=[];safeSet("nova_history",history);welcomeChat()});
+function welcomeChat(){if(!$("chatbox").children.length)addMessage("Hello! I'm NOVA AI MINI. Ask me about AI, technology, science, football, games, mathematics and more. What would you like to discover?","bot",false)}
+function toggleFavorite(item){
+ const exists=favorites.some(x=>x.title===item.title);
+ favorites=exists?favorites.filter(x=>x.title!==item.title):[...favorites,item];
+ safeSet("nova_favs",favorites);renderSaved();
+}
+function makeResult(item){
+ const wrap=document.createElement("article");wrap.className="result";
+ const h=document.createElement("h4");h.textContent=item.title;
+ const tag=document.createElement("div");tag.className="tag";tag.textContent=item.cat||"Knowledge";
+ const p=document.createElement("p");p.textContent=item.body||item.desc||"";
+ const actions=document.createElement("div");actions.className="actions";
+ const save=document.createElement("button");save.className="btn";save.textContent=favorites.some(x=>x.title===item.title)?"★ Saved":"☆ Save";
+ save.addEventListener("click",()=>toggleFavorite(item));
+ actions.append(save);
+ if(item.body){
+  const ask=document.createElement("button");ask.className="btn";ask.textContent="Ask NOVA";
+  ask.addEventListener("click",()=>{showView("chat");$("question").value=item.title;sendQuestion()});
+  actions.append(ask);
+ }
+ wrap.append(tag,h,p,actions);return wrap;
+}
+function renderKnowledge(){
+ const q=$("knowledgeSearch").value.toLowerCase().trim();
+ let list=knowledge.filter(x=>(activeCategory==="All"||x.cat===activeCategory)&&(!q||(x.title+" "+x.cat+" "+x.keys+" "+x.body).toLowerCase().includes(q)));
+ $("countLabel").textContent=knowledge.length+" built-in topics";
+ $("knowledgeResults").replaceChildren();
+ if(!list.length){$("knowledgeResults").textContent="No matching topics. Try another search.";return}
+ list.forEach(x=>$("knowledgeResults").append(makeResult(x)));
+}
+$("knowledgeSearch").addEventListener("input",renderKnowledge);
+function renderFilters(){
+ const cats=["All",...new Set(knowledge.map(x=>x.cat))];
+ $("categoryFilters").replaceChildren();
+ cats.forEach(cat=>{const b=document.createElement("button");b.className="chip";b.textContent=cat;
+ b.style.borderColor=activeCategory===cat?"var(--a)":"var(--line)";
+ b.addEventListener("click",()=>{activeCategory=cat;renderFilters();renderKnowledge()});
+ $("categoryFilters").append(b)});
+}
+function renderSaved(){
+ $("savedResults").replaceChildren();
+ if(!favorites.length){$("savedResults").textContent="No favourites saved yet. Save topics from the Knowledge Library.";return}
+ favorites.forEach(x=>$("savedResults").append(makeResult(x)));
+}
+function renderHistory(){
+ $("historyResults").replaceChildren();
+ if(!history.length){$("historyResults").textContent="Your chat history is empty.";return}
+ [...history].reverse().forEach(x=>{const d=document.createElement("div");d.className="result";
+ const t=document.createElement("div");t.className="tag";t.textContent=x.time+" • "+x.type;
+ const p=document.createElement("p");p.textContent=x.text;
+ d.append(t,p);$("historyResults").append(d)});
+}
+$("clearHistory").addEventListener("click",()=>{history=[];safeSet("nova_history",history);renderHistory()});
+
+function appCard(app){
+ const d=document.createElement("div");d.className="result";
+ const h=document.createElement("h4");h.textContent=app.name;
+ const p=document.createElement("p");p.textContent=app.desc;
+ const play=document.createElement("a");play.href="https://play.google.com/store/search?q="+encodeURIComponent(app.name)+"&c=apps";play.target="_blank";play.rel="noopener";play.textContent="Search on Google Play ↗";
+ const web=document.createElement("a");web.href=app.site||"https://www.google.com/search?q="+encodeURIComponent(app.name+" official website");web.target="_blank";web.rel="noopener";web.textContent="Website ↗";
+ d.append(h,p,play,web);return d;
+}
+function searchApps(){
+ const q=$("appSearch").value.trim().toLowerCase();$("appResults").replaceChildren();
+ if(!q){$("appResults").textContent="Type an app name or describe what you need.";return}
+ const matches=apps.filter(a=>(a.name+" "+a.desc+" "+a.tags).toLowerCase().includes(q));
+ if(matches.length){matches.forEach(a=>$("appResults").append(appCard(a)))}
+ else{
+  const d=document.createElement("div");d.className="result";
+  d.innerHTML="<h4>Search app suggestions</h4><p>NOVA does not have a built-in entry for that exact app. Use these searches to explore current results.</p>";
+  const a=document.createElement("a");a.href="https://play.google.com/store/search?q="+encodeURIComponent(q)+"&c=apps";a.target="_blank";a.rel="noopener";a.textContent="Search Google Play ↗";
+  const b=document.createElement("a");b.href="https://www.google.com/search?q="+encodeURIComponent(q+" official app");b.target="_blank";b.rel="noopener";b.textContent="Search the web ↗";
+  d.append(a,b);$("appResults").append(d);
+ }
+}
+$("appSearchBtn").addEventListener("click",searchApps);
+$("appSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchApps()});
+["offline games","coding","maths","photo editor","science"].forEach(q=>{
+ const b=document.createElement("button");b.className="chip";b.textContent=q;
+ b.addEventListener("click",()=>{$("appSearch").value=q;searchApps()});$("appQuick").append(b);
+});
+function searchGames(){
+ const q=$("gameSearch").value.trim();$("gameResults").replaceChildren();
+ if(!q){$("gameResults").textContent="Enter a game name or genre.";return}
+ const url="https://play.google.com/store/search?q="+encodeURIComponent(q)+"&c=apps";
+ const d=document.createElement("div");d.className="result";
+ const h=document.createElement("h4");h.textContent="Explore: "+q;
+ const p=document.createElement("p");p.textContent="This opens a Play Store search. Check each game's offline support, size, device compatibility and in-app purchases before installing.";
+ const a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";a.textContent="Find games on Google Play ↗";
+ d.append(h,p,a);$("gameResults").append(d);
+}
+$("gameSearchBtn").addEventListener("click",searchGames);
+$("gameSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchGames()});
+gameGenres.forEach(g=>{
+ const d=document.createElement("div");d.className="tile";
+ d.innerHTML="<span>"+g[0]+"</span><strong>"+g[1]+"</strong><p>Explore this genre</p>";
+ d.addEventListener("click",()=>{$("gameSearch").value=g[1];searchGames()});$("gameTiles").append(d);
+});
+footballTopics.forEach(t=>{
+ const d=document.createElement("div");d.className="tile";
+ d.innerHTML="<span>"+t[0]+"</span><strong>"+t[1]+"</strong><p>Explore football knowledge</p>";
+ d.addEventListener("click",()=>{showView("chat");$("question").value=t[1]+" in football";sendQuestion()});
+ $("footballTiles").append(d);
+});
+function renderHome(){
+ const tiles=[
+ ["🤖","Artificial intelligence","AI and machine learning","Artificial Intelligence"],
+ ["📱","Technology","Phones, computers and coding","Technology"],
+ ["🔬","Science","Physics, chemistry and biology","Science"],
+ ["🌌","Space","Planets and the universe","Space"],
+ ["⚽","Football","Rules and tactics","Football"],
+ ["🎮","Gaming","Game genres and guides","Gaming"],
+ ["🧮","Mathematics","Maths and problem solving","Mathematics"],
+ ["💡","Curious questions","Explore surprising ideas","Curious Questions"]
+ ];
+ tiles.forEach(t=>{const d=document.createElement("div");d.className="tile";
+ d.innerHTML="<span>"+t[0]+"</span><strong>"+t[1]+"</strong><p>"+t[2]+"</p>";
+ d.addEventListener("click",()=>{showView("knowledge");activeCategory=t[3];renderFilters();renderKnowledge()});
+ $("homeTiles").append(d)});
+ const samples=["What is artificial intelligence?","How does a smartphone work?","Explain the offside rule","What is a black hole?","How do I learn programming?"];
+ samples.forEach(s=>{const b=document.createElement("button");b.className="chip";b.textContent=s;
+ b.addEventListener("click",()=>{showView("chat");$("question").value=s;sendQuestion()});
+ $("suggestions").append(b);$("chatSuggestions").append(b.cloneNode(true));
+ });
+}
+function startQuiz(){
+ quizIndex=0;quizScore=0;quizOrder=[...quizQuestions].sort(()=>Math.random()-.5);
+ $("quizScore").textContent="Score: 0";showQuizQuestion();
+}
+function showQuizQuestion(){
+ const card=$("quizCard");card.replaceChildren();
+ if(quizIndex>=quizOrder.length){
+  const h=document.createElement("h3");h.textContent="Quiz complete!";
+  const p=document.createElement("p");p.textContent="You scored "+quizScore+" out of "+quizOrder.length+".";
+  const b=document.createElement("button");b.className="btn primary";b.textContent="Play again";b.addEventListener("click",startQuiz);
+  card.append(h,p,b);return;
+ }
+ const q=quizOrder[quizIndex];const count=document.createElement("div");count.className="tag";count.textContent="QUESTION "+(quizIndex+1)+" OF "+quizOrder.length;
+ const h=document.createElement("h3");h.textContent=q.q;card.append(count,h);
+ q.a.forEach((option,i)=>{const b=document.createElement("button");b.className="btn";b.style.display="block";b.style.width="100%";b.style.margin="8px 0";b.textContent=option;
+ b.addEventListener("click",()=>{
+  [...card.querySelectorAll("button")].forEach(x=>x.disabled=true);
+  const result=document.createElement("p");result.textContent=(i===q.c?"Correct! ":"Not quite. Correct answer: "+q.a[q.c]+". ")+q.why;
+  result.className="answer";card.append(result);
+  if(i===q.c)quizScore++;
+  $("quizScore").textContent="Score: "+quizScore;
+  const next=document.createElement("button");next.className="btn primary";next.textContent=quizIndex===quizOrder.length-1?"See result":"Next question";
+  next.addEventListener("click",()=>{quizIndex++;showQuizQuestion()});card.append(next);
+ });card.append(b)});
+}
+$("startQuiz").addEventListener("click",startQuiz);
+$("themeBtn").addEventListener("click",()=>{
+ document.body.classList.toggle("light");
+ safeSet("nova_theme",document.body.classList.contains("light")?"light":"dark");
+});
+if(safeGet("nova_theme","dark")==="light")document.body.classList.add("light");
+$("randomBtn").addEventListener("click",()=>{
+ const item=knowledge[Math.floor(Math.random()*knowledge.length)];
+ showView("chat");addMessage("Surprise topic: "+item.title+"\n\n"+item.body,"bot");
+});
+renderHome();renderFilters();renderKnowledge();welcomeChat();
+</script>
+</body>
+</html>
